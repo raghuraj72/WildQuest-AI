@@ -52,6 +52,44 @@ if (canvas && host) {
     halo.position.copy(sun.position);
     scene.add(halo);
 
+    // Volumetric-looking sun corona: soft glow, warm rays, and a subtle lens ring.
+    const glowCanvas = document.createElement("canvas");
+    glowCanvas.width = glowCanvas.height = 256;
+    const glowCtx = glowCanvas.getContext("2d");
+    const glowGradient = glowCtx.createRadialGradient(128, 128, 8, 128, 128, 126);
+    glowGradient.addColorStop(0, "rgba(255,247,196,0.95)");
+    glowGradient.addColorStop(0.16, "rgba(255,208,119,0.38)");
+    glowGradient.addColorStop(0.46, "rgba(255,169,74,0.12)");
+    glowGradient.addColorStop(1, "rgba(255,169,74,0)");
+    glowCtx.fillStyle = glowGradient;
+    glowCtx.fillRect(0, 0, 256, 256);
+    const glowTexture = new THREE.CanvasTexture(glowCanvas);
+    const sunGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture, color: 0xffe5a2, transparent: true, opacity: 0.72, depthWrite: false, blending: THREE.AdditiveBlending }));
+    sunGlow.position.copy(sun.position);
+    sunGlow.scale.set(8.5, 8.5, 1);
+    scene.add(sunGlow);
+    const sunLight = new THREE.PointLight(0xffc878, 5.5, 28, 1.7);
+    sunLight.position.copy(sun.position);
+    scene.add(sunLight);
+
+    const sunRayGroup = new THREE.Group();
+    sunRayGroup.position.copy(sun.position);
+    const rayMaterial = new THREE.MeshBasicMaterial({ color: 0xffd783, transparent: true, opacity: 0.18, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending });
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const length = i % 2 === 0 ? 2.7 : 1.9;
+      const rayShape = new THREE.BufferGeometry();
+      const inner = 1.12, halfWidth = i % 2 === 0 ? 0.17 : 0.11;
+      rayShape.setAttribute("position", new THREE.Float32BufferAttribute([
+        Math.cos(angle - halfWidth) * inner, Math.sin(angle - halfWidth) * inner, 0,
+        Math.cos(angle + halfWidth) * inner, Math.sin(angle + halfWidth) * inner, 0,
+        Math.cos(angle) * (inner + length), Math.sin(angle) * (inner + length), 0
+      ], 3));
+      rayShape.computeVertexNormals();
+      sunRayGroup.add(new THREE.Mesh(rayShape, rayMaterial.clone()));
+    }
+    scene.add(sunRayGroup);
+
     function makeHill({ x, y, z, sx, sy, sz, color, segments = 7 }) {
       const geometry = new THREE.IcosahedronGeometry(1, 2);
       const position = geometry.attributes.position;
@@ -146,6 +184,35 @@ if (canvas && host) {
     }));
     scene.add(motes);
 
+    // Small 3D bird silhouettes fly through the forest scene with articulated wings.
+    const flyingBirds = [];
+    const birdBodyGeo = new THREE.SphereGeometry(0.075, 8, 6);
+    const birdMat = new THREE.MeshStandardMaterial({ color: 0x182c21, roughness: 0.8, emissive: 0x25442d, emissiveIntensity: 0.18 });
+    const wingShape = new THREE.Shape();
+    wingShape.moveTo(0, 0);
+    wingShape.quadraticCurveTo(0.2, 0.15, 0.52, 0.09);
+    wingShape.quadraticCurveTo(0.25, -0.02, 0, 0);
+    const wingGeo = new THREE.ShapeGeometry(wingShape);
+    for (let i = 0; i < 5; i++) {
+      const bird = new THREE.Group();
+      const body = new THREE.Mesh(birdBodyGeo, birdMat);
+      body.scale.set(1.35, 0.7, 0.7);
+      bird.add(body);
+      const leftWing = new THREE.Mesh(wingGeo, birdMat);
+      leftWing.position.set(-0.02, 0.015, 0.02);
+      leftWing.rotation.z = Math.PI * 0.08;
+      const rightWing = new THREE.Mesh(wingGeo, birdMat);
+      rightWing.position.set(-0.02, 0.015, -0.02);
+      rightWing.rotation.z = Math.PI * 0.08;
+      rightWing.scale.y = -1;
+      bird.add(leftWing, rightWing);
+      bird.position.set(-10 - i * 4.5, 4.3 + Math.random() * 3.5, -3.5 - Math.random() * 5);
+      bird.scale.setScalar(0.55 + Math.random() * 0.35);
+      bird.rotation.y = Math.PI;
+      scene.add(bird);
+      flyingBirds.push({ bird, leftWing, rightWing, phase: Math.random() * Math.PI * 2, speed: 1.2 + Math.random() * 1.1, baseY: bird.position.y });
+    }
+
     const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     const onPointer = event => {
       const rect = host.getBoundingClientRect();
@@ -184,6 +251,18 @@ if (canvas && host) {
       if (!reducedMotion) {
         treeData.forEach(({ tree, phase, sway }) => { tree.rotation.z = Math.sin(t * 0.45 + phase) * sway; });
         halo.scale.setScalar(1 + Math.sin(t * 0.8) * 0.045);
+        sunGlow.scale.setScalar(8.5 + Math.sin(t * 0.55) * 0.55);
+        sunGlow.material.opacity = 0.62 + (Math.sin(t * 0.72) + 1) * 0.09;
+        sunRayGroup.rotation.z = t * 0.035;
+        sunRayGroup.children.forEach((ray, i) => { ray.material.opacity = 0.10 + (Math.sin(t * 0.9 + i) + 1) * 0.055; });
+        sunLight.intensity = 4.8 + (Math.sin(t * 0.65) + 1) * 0.65;
+        flyingBirds.forEach(({ bird, leftWing, rightWing, phase, speed, baseY }) => {
+          bird.position.x += speed * 0.018;
+          if (bird.position.x > 12) bird.position.x = -13;
+          bird.position.y = baseY + Math.sin(t * 0.7 + phase) * 0.22;
+          leftWing.rotation.z = Math.sin(t * 8 + phase) * 0.62;
+          rightWing.rotation.z = -Math.sin(t * 8 + phase) * 0.62;
+        });
         motes.material.opacity = 0.55 + (Math.sin(t * 1.7) + 1) * 0.18;
         const pos = moteGeo.attributes.position;
         for (let i = 0; i < moteCount; i++) {

@@ -491,3 +491,77 @@ body.soft-light .ambient { opacity: .23; }
   .photo-card { opacity: 1; transform: none; }
   .reveal-on-scroll { opacity: 1; transform: none; }
 }
+
+
+/* ===== Sky-wide bird flight: lightweight pseudo-3D canvas overlay ===== */
+.bird-flight-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+  pointer-events: none;
+  opacity: .9;
+  mix-blend-mode: screen;
+}
+/* Warm sunlight blooms around the Three.js sun, with a slow breathing glow. */
+.hero-art::after {
+  content: "";
+  position: absolute;
+  width: 34%;
+  aspect-ratio: 1;
+  right: 4%;
+  top: 4%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle, rgba(255,229,155,.22) 0%, rgba(255,190,95,.11) 25%, rgba(255,174,73,.045) 47%, transparent 72%);
+  filter: blur(5px);
+  animation: sunBreath 5.8s ease-in-out infinite alternate;
+}
+@keyframes sunBreath {
+  from { transform: scale(.92); opacity: .68; filter: blur(7px); }
+  to { transform: scale(1.12); opacity: 1; filter: blur(2px); }
+}
+@media (max-width: 700px) {
+  .bird-flight-canvas { opacity: .68; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bird-flight-canvas { display: none; }
+  .hero-art::after { animation: none; }
+}
+
+
+/* Interactive sky: weather switch stays above the decorative canvas. */
+.weather-toggle {
+  position: fixed;
+  z-index: 30;
+  right: 22px;
+  bottom: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: 1px solid rgba(224, 255, 236, .22);
+  border-radius: 999px;
+  color: #effff4;
+  background: rgba(7, 26, 20, .76);
+  box-shadow: 0 8px 30px rgba(0,0,0,.2), inset 0 1px rgba(255,255,255,.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  font: 600 13px/1 "DM Sans", sans-serif;
+  cursor: pointer;
+  transition: transform .22s ease, border-color .22s ease, background .22s ease;
+}
+.weather-toggle:hover { transform: translateY(-3px); border-color: rgba(170, 255, 206, .58); background: rgba(11, 48, 35, .9); }
+.weather-toggle:focus-visible { outline: 2px solid #b8ffd1; outline-offset: 4px; }
+.weather-toggle[data-weather="sunny"] { box-shadow: 0 0 25px rgba(255, 202, 100, .14), 0 8px 30px rgba(0,0,0,.2); }
+.weather-toggle[data-weather="cloudy"] { border-color: rgba(197, 224, 238, .38); }
+.weather-toggle[data-weather="rainy"] { border-color: rgba(129, 192, 239, .55); box-shadow: 0 0 25px rgba(89, 160, 220, .16), 0 8px 30px rgba(0,0,0,.2); }
+.bird-flight-canvas { z-index: 8; }
+@media (max-width: 560px) {
+  .weather-toggle { right: 12px; bottom: 12px; padding: 10px 12px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .weather-toggle { transition: none; }
+}

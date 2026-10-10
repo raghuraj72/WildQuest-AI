@@ -15,6 +15,8 @@
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <div class="grain"></div>
+  <canvas id="birdFlightCanvas" class="bird-flight-canvas" aria-hidden="true"></canvas>
+  <button id="weatherButton" class="weather-toggle" type="button" aria-label="Change weather effects" title="Change weather: sunny, cloudy, rainy">☀ <span>Sunny</span></button>
 
   <header class="topbar">
     <a class="brand" href="#" aria-label="WildQuest AI home">
@@ -240,6 +242,7 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="scene3d.js"></script>
+  <script src="bird-flight.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

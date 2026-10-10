@@ -4,13 +4,14 @@
 
 WildQuest AI turns a spare 5, 15, or 30 minutes into a small, real-world nature adventure. Choose an environment, available time, and mood; get a safe, doable quest; then head outside.
 
-This edition adds an actual real-time **Three.js/WebGL 3D forest** with low-poly terrain, layered hills, trees, sun glow, fireflies, and pointer-driven camera parallax. It also adds a saved-quest library and fixes model selection so embedding-only models are not incorrectly used for text generation.
+This edition adds an actual real-time **Three.js/WebGL 3D forest** with low-poly terrain, layered hills, trees, a radiant 3D sun, fireflies, flying 3D birds, and pointer-driven camera parallax. A separate lightweight pseudo-3D flock glides across the full dashboard, creating depth with perspective scaling and animated wings. It also adds a saved-quest library and fixes model selection so embedding-only models are not incorrectly used for text generation.
 
 > Hacktoberfest Open-Source AI Challenge — Week 1 theme: **Touch Grass**
 
 ## Features
 
-- **Interactive 3D forest:** Three.js scene, moving trees, glowing sun, fireflies, depth, pointer parallax, responsive resizing, and reduced-motion support.
+- **Interactive 3D forest:** Three.js scene, moving trees, animated 3D birds, radiant sun with rotating rays and a soft corona, fireflies, depth, pointer parallax, responsive resizing, and reduced-motion support.
+- **Birds across the dashboard:** A lightweight full-screen canvas flock with wing flaps, depth scaling, and gentle flight paths. It does not block buttons or links and respects reduced-motion settings.
 - **Real nature photography gallery:** Four responsive photographic cards from Unsplash with hover zoom, image shimmer, scroll reveals, and subtle pointer tilt.
 - **Graceful fallback:** If WebGL or the Three.js CDN is unavailable, the rest of the app and its CSS nature artwork remain usable.
 - **Personalized quests:** Pick environment, 5/15/30/60 minutes, and a mood: calm, curious, movement, or creative.
@@ -28,6 +29,7 @@ WildQuest-AI/
 ├── styles.css
 ├── script.js
 ├── scene3d.js
+├── bird-flight.js
 └── README.md
 ```
 
@@ -78,6 +80,13 @@ ollama serve
 5. Generate a quest. If local AI is not available, the app still returns a built-in quest.
 
 If port 11434 is already in use, Ollama may already be running. Close the existing Ollama process/app before running `ollama serve` with the environment variable. Do not expose Ollama to public networks or allow arbitrary browser origins on shared machines.
+
+## Interactive sky effects
+
+- A colorful flock of larger, feather-detailed birds flies across the viewport in loose groups.
+- Soft volumetric-style clouds drift overhead.
+- Use the floating weather control to switch between sunny, cloudy, and rainy skies. Rain adds animated droplets and a subtle cool haze.
+- The effects are drawn on a transparent canvas and do not intercept clicks on the page. They respect the operating system reduced-motion preference.
 
 ## Controls
 
