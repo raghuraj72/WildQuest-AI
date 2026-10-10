@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071a14" />
+  <meta name="description" content="WildQuest AI turns your next break into a real-world nature adventure, powered by open-weight AI." />
+  <title>WildQuest AI — Your next adventure is outside</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="grain"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="WildQuest AI home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><path d="M20 34V18M20 24C8 24 6 14 7 7c9 0 16 4 16 13M20 20C20 10 27 5 34 5c1 10-3 17-14 19" /><path d="M12 14l8 10m9-11-9 12" /></svg>
+      </span>
+      <span>WildQuest<span class="brand-ai">.ai</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#discover">Discover</a>
+      <a href="#quests">Quests</a>
+      <a href="#how-it-works">How it works</a>
+    </nav>
+    <div class="top-actions">
+      <span class="model-pill"><span class="pulse-dot"></span><span id="modelStatus">Checking local AI…</span></span>
+      <button class="icon-button" id="savedQuestsButton" aria-label="View saved quests" title="View saved quests">♡ <span id="savedCount">0</span></button>
+      <button class="icon-button" id="themeButton" aria-label="Toggle ambience" title="Toggle ambience">☼</button>
+      <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="discover">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> A LITTLE LESS SCROLLING. A LOT MORE LIVING.</div>
+        <h1>Your next great<br />adventure is <span class="text-gradient">outside.</span></h1>
+        <p class="hero-description">Meet your AI nature companion. Turn a spare 15 minutes into a tiny expedition, discover the wild around you, and reconnect with the world beyond your screen.</p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#quests">Find my next quest <span aria-hidden="true">↗</span></a>
+          <a class="text-button" href="#how-it-works"><span class="play-icon">▶</span> How it works</a>
+        </div>
+        <div class="hero-proof">
+          <div class="avatar-stack" aria-hidden="true"><span>🌿</span><span>🐦</span><span>🍄</span></div>
+          <div><strong>Small steps. Real-world wonder.</strong><span>No streak pressure. Just go outside.</span></div>
+        </div>
+      </div>
+
+      <div class="hero-art" id="heroArt" aria-label="Interactive real-time 3D forest landscape. Move your pointer to explore the scene.">
+        <canvas id="forest3d" aria-label="Animated 3D forest with hills, trees, glowing particles and a sun"></canvas>
+        <div class="scene-hud"><span class="scene-live-dot"></span> LIVE 3D WORLD <span class="scene-hud-divider">/</span> MOVE TO EXPLORE</div>
+        <div class="art-orbit orbit-a"></div><div class="art-orbit orbit-b"></div>
+        <div class="art-label label-top"><span class="tiny-spark">✦</span> YOUR WORLD, REWILDed</div>
+        <div class="sun-glow"></div>
+        <div class="moon-orb"></div>
+        <div class="mountain mountain-back"></div>
+        <div class="mountain mountain-mid"></div>
+        <div class="mountain mountain-front"></div>
+        <div class="forest-layer forest-back"></div>
+        <div class="forest-layer forest-mid"></div>
+        <div class="forest-layer forest-front"></div>
+        <div class="floating-leaf leaf-one">✦</div><div class="floating-leaf leaf-two">✧</div><div class="floating-leaf leaf-three">✦</div>
+        <div class="art-card glass-card">
+          <div class="card-icon">🌱</div>
+          <div><span class="art-card-label">TODAY'S POSSIBILITY</span><strong>Notice 3 things<br />you've never noticed.</strong></div>
+          <span class="card-arrow">↗</span>
+        </div>
+        <div class="art-caption"><span class="caption-dot"></span> The outdoors is closer than you think.</div>
+      </div>
+      <div class="hero-bottom-line"><span>01 / FIND YOUR WILD</span><span>MADE FOR THE CURIOUS</span><span>BUILT WITH OPEN AI <span class="sparkle">✦</span></span></div>
+    </section>
+
+
+    <section class="photo-experience section-wrap" id="nature-gallery">
+      <div class="section-heading photo-heading">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> A WINDOW INTO THE WILD</div><h2>Real places. <span class="text-gradient">Real wonder.</span></h2></div>
+        <p>A little visual inspiration for your next tiny expedition. The best view, though, is the one you discover for yourself.</p>
+      </div>
+      <div class="photo-grid">
+        <article class="photo-card photo-card-tall reveal-card" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=85" alt="Sunlight filtering through a quiet green forest" loading="lazy" />
+          <div class="photo-shade"></div><span class="photo-chip">01 / FIND CALM</span>
+          <div class="photo-card-copy"><span>TAKE THE SLOW PATH</span><h3>Let the forest<br>set the pace.</h3><p>Try a five-minute listening walk.</p></div><span class="photo-arrow" aria-hidden="true">↗</span>
+        </article>
+        <article class="photo-card reveal-card" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1000&q=85" alt="Golden morning light spreading across a green landscape" loading="lazy" />
+          <div class="photo-shade"></div><span class="photo-chip">02 / LOOK CLOSER</span>
+          <div class="photo-card-copy"><span>FOLLOW THE LIGHT</span><h3>Notice the little things.</h3><p>Find three colors in the world around you.</p></div><span class="photo-arrow" aria-hidden="true">↗</span>
+        </article>
+        <article class="photo-card reveal-card" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1000&q=85" alt="Wild deer standing among trees in a natural woodland" loading="lazy" />
+          <div class="photo-shade"></div><span class="photo-chip">03 / BE GENTLE</span>
+          <div class="photo-card-copy"><span>SHARE THE SPACE</span><h3>Wildlife, at a distance.</h3><p>Observe quietly without disturbing nature.</p></div><span class="photo-arrow" aria-hidden="true">↗</span>
+        </article>
+        <article class="photo-card photo-card-wide reveal-card" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=85" alt="Open mountain landscape and a winding trail under a bright sky" loading="lazy" />
+          <div class="photo-shade"></div><span class="photo-chip">04 / GO YOUR OWN WAY</span>
+          <div class="photo-card-copy"><span>YOUR NEXT LITTLE ADVENTURE</span><h3>There is more out there.</h3><p>Choose a safe route, take a breath, and see what you notice.</p></div><span class="photo-arrow" aria-hidden="true">↗</span>
+        </article>
+      </div>
+      <p class="photo-credit-note">Photography loads from Unsplash and needs an internet connection. Images are inspiration, not a map of your local area.</p>
+    </section>
+
+    <section class="quest-section section-wrap" id="quests">
+      <div class="section-heading">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR OUTDOOR RESET</div><h2>Make room for <span class="text-gradient">wonder.</span></h2></div>
+        <p>Tell WildQuest what your day looks like. Get a small, doable mission that starts where you are.</p>
+      </div>
+
+      <div class="quest-layout">
+        <div class="quest-form glass-panel">
+          <div class="panel-topline"><span class="panel-number">01</span><span>CRAFT YOUR QUEST</span><span class="panel-status"><span class="pulse-dot"></span> PERSONALIZED</span></div>
+          <form id="questForm">
+            <label for="environment">Where will you explore?</label>
+            <div class="select-wrap"><span class="field-icon">⌁</span><select id="environment" name="environment">
+              <option value="a nearby park or garden">Park or garden</option>
+              <option value="my street or neighborhood">My neighborhood</option>
+              <option value="a balcony or windowsill">Balcony or windowsill</option>
+              <option value="a trail or open natural area">Trail or open natural area</option>
+              <option value="anywhere I can safely step outside">Anywhere outdoors</option>
+            </select><span class="select-chevron">⌄</span></div>
+            <label for="time">How much time do you have?</label>
+            <div class="time-options" role="group" aria-label="Available time">
+              <button type="button" class="time-option" data-minutes="5">5 min</button>
+              <button type="button" class="time-option active" data-minutes="15">15 min</button>
+              <button type="button" class="time-option" data-minutes="30">30 min</button>
+              <button type="button" class="time-option" data-minutes="60">1 hour</button>
+            </div>
+            <input type="hidden" id="time" value="15" />
+            <label for="mood">What kind of reset do you need?</label>
+            <div class="mood-grid">
+              <button type="button" class="mood-option active" data-mood="calm"><span>🌾</span><strong>Find calm</strong><small>Slow down & breathe</small></button>
+              <button type="button" class="mood-option" data-mood="curious"><span>🔎</span><strong>Get curious</strong><small>Notice something new</small></button>
+              <button type="button" class="mood-option" data-mood="move"><span>🥾</span><strong>Get moving</strong><small>Explore & wander</small></button>
+              <button type="button" class="mood-option" data-mood="creative"><span>🎨</span><strong>Feel creative</strong><small>Make something outside</small></button>
+            </div>
+            <label for="extra">Anything else? <span class="optional">(optional)</span></label>
+            <textarea id="extra" rows="2" maxlength="240" placeholder="e.g. I'm with a friend, I have a notebook, I can't walk far…"></textarea>
+            <button type="submit" class="primary-button generate-button" id="generateButton"><span class="button-spark">✦</span> Generate my nature quest <span class="button-arrow">↗</span></button>
+            <p class="privacy-note"><span>◈</span> Your prompt stays in this browser unless you connect a local AI model.</p>
+          </form>
+        </div>
+
+        <div class="quest-result-wrap">
+          <div class="result-card" id="resultCard" aria-live="polite">
+            <div class="result-scenery">
+              <div class="result-sun"></div><div class="result-hill hill-one"></div><div class="result-hill hill-two"></div>
+              <div class="result-badge"><span>✦</span> YOUR QUEST AWAITS</div>
+              <div class="result-plant">🌿</div>
+              <div class="result-time"><span>◷</span> <span id="resultMinutes">15 MIN</span></div>
+            </div>
+            <div class="result-content">
+              <div class="result-kicker" id="resultKicker">A MOMENT OF CALM</div>
+              <h3 id="resultTitle">The Tiny Wonder Walk</h3>
+              <p id="resultDescription">Step outside and let your attention wander. Your only goal is to notice one small thing that makes you pause.</p>
+              <div class="quest-steps" id="questSteps">
+                <div class="quest-step"><span>01</span><p>Leave your phone in your pocket and take three slow breaths.</p></div>
+                <div class="quest-step"><span>02</span><p>Find a leaf, a shadow, or a sound you would usually walk past.</p></div>
+                <div class="quest-step"><span>03</span><p>Stay with it for one full minute. What did you notice?</p></div>
+              </div>
+              <div class="result-actions"><button class="primary-button" id="startQuestButton">I'm heading out <span>↗</span></button><button class="save-button" id="saveQuestButton" aria-label="Save this quest" title="Save this quest">♡</button><button class="regenerate-button" id="regenerateButton" title="Generate another quest" aria-label="Generate another quest">↻</button></div>
+              <p class="result-footnote" id="resultFootnote">AI-generated inspiration. Adapt it to your surroundings and stay safe.</p>
+            </div>
+          </div>
+          <div class="quest-under-card"><span class="tiny-spark">✦</span><span id="questStatus">Your next chapter starts when you close this tab.</span><span class="under-card-leaf">↗</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="manifesto-section section-wrap" id="how-it-works">
+      <div class="manifesto-art">
+        <div class="manifesto-ring ring-one"></div><div class="manifesto-ring ring-two"></div>
+        <div class="manifesto-center">🌍</div><div class="manifesto-leaf ml-one">🍃</div><div class="manifesto-leaf ml-two">🌱</div><div class="manifesto-leaf ml-three">🪻</div>
+        <div class="manifesto-tag tag-one">LESS SCREEN TIME</div><div class="manifesto-tag tag-two">MORE REAL LIFE</div>
+      </div>
+      <div class="manifesto-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> OPEN BY NATURE</div>
+        <h2>AI that helps you<br /><span class="text-gradient">look up.</span></h2>
+        <p>Most apps compete for your attention. WildQuest is designed to give it back. It uses AI to suggest the next small step, then invites you to put your device away and experience the world directly.</p>
+        <div class="principle-list">
+          <div><span class="principle-icon">✳</span><div><strong>Open models, open possibilities</strong><p>Connect an open-weight model through Ollama and adapt the experience to your needs.</p></div></div>
+          <div><span class="principle-icon">⌁</span><div><strong>Privacy starts local</strong><p>With a local model, your prompts can stay on your own machine instead of going to a hosted AI service.</p></div></div>
+          <div><span class="principle-icon">↗</span><div><strong>Designed to send you outside</strong><p>Short missions, simple steps, and no endless feed to keep you scrolling.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-strip section-wrap">
+      <div><span class="stat-number">01</span><span class="stat-label">SMALL QUEST, BIG RESET</span></div>
+      <div><span class="stat-number">∞</span><span class="stat-label">WAYS TO NOTICE NATURE</span></div>
+      <div><span class="stat-number">0</span><span class="stat-label">NEED FOR A PERFECT DAY</span></div>
+      <div><span class="stat-number">100%</span><span class="stat-label">YOUR PACE, YOUR PLACE</span></div>
+    </section>
+
+    <section class="closing-cta section-wrap">
+      <div class="cta-glow"></div>
+      <div class="eyebrow"><span class="eyebrow-line"></span> YOUR OUTSIDE ERA STARTS NOW</div>
+      <h2>The world is still<br />full of <span class="text-gradient">little wonders.</span></h2>
+      <p>Pick a quest. Take a breath. Go see what's out there.</p>
+      <a href="#quests" class="primary-button">Find a tiny adventure <span>↗</span></a>
+      <span class="cta-decoration deco-one">✳</span><span class="cta-decoration deco-two">✧</span><span class="cta-decoration deco-three">✦</span>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand footer-brand" href="#"><span class="brand-mark"><svg viewBox="0 0 40 40"><path d="M20 34V18M20 24C8 24 6 14 7 7c9 0 16 4 16 13M20 20C20 10 27 5 34 5c1 10-3 17-14 19" /></svg></span><span>WildQuest<span class="brand-ai">.ai</span></span></a>
+    <p>Made for the curious. Built to get you out there.</p>
+    <div class="footer-right"><span>AN OPEN-SOURCE AI EXPERIMENT</span><a href="#discover">BACK TO TOP ↑</a></div>
+  </footer>
+
+
+  <div class="modal-backdrop" id="savedModal" role="dialog" aria-modal="true" aria-labelledby="savedModalTitle" hidden>
+    <div class="modal-card saved-modal-card">
+      <button class="modal-close" id="closeSavedModal" aria-label="Close saved quests">×</button>
+      <div class="modal-emoji">♡</div>
+      <div class="eyebrow">YOUR PERSONAL FIELD NOTES</div>
+      <h2 id="savedModalTitle">Saved quests</h2>
+      <p>Keep a few little adventures ready for whenever you need a reset.</p>
+      <div id="savedQuestList" class="saved-quest-list"></div>
+      <button class="secondary-button" id="clearSavedButton" type="button">Clear saved quests</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="questModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="closeModal" aria-label="Close">×</button>
+      <div class="modal-emoji">🌿</div>
+      <div class="eyebrow">QUEST IN PROGRESS</div>
+      <h2 id="modalTitle">Go find your tiny wonder.</h2>
+      <p id="modalMessage">Your quest is ready. Put your phone away and enjoy the moment.</p>
+      <div class="modal-checklist"><label><input type="checkbox"> I have picked a safe place</label><label><input type="checkbox"> I can leave my screen behind</label><label><input type="checkbox"> I'm ready to notice something new</label></div>
+      <button class="primary-button" id="finishPrepButton">Let's go <span>↗</span></button>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="scene3d.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
