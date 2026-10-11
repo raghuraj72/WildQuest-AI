@@ -166,7 +166,8 @@
                 <div class="quest-step"><span>02</span><p>Find a leaf, a shadow, or a sound you would usually walk past.</p></div>
                 <div class="quest-step"><span>03</span><p>Stay with it for one full minute. What did you notice?</p></div>
               </div>
-              <div class="result-actions"><button class="primary-button" id="startQuestButton">I'm heading out <span>↗</span></button><button class="save-button" id="saveQuestButton" aria-label="Save this quest" title="Save this quest">♡</button><button class="regenerate-button" id="regenerateButton" title="Generate another quest" aria-label="Generate another quest">↻</button></div>
+              <div class="result-actions"><button class="primary-button" id="startQuestButton">I'm heading out <span>↗</span></button>
+            <button class="secondary-button complete-quest-button" id="completeQuestButton" type="button" disabled>Complete quest · +25 XP</button><button class="save-button" id="saveQuestButton" aria-label="Save this quest" title="Save this quest">♡</button><button class="regenerate-button" id="regenerateButton" title="Generate another quest" aria-label="Generate another quest">↻</button></div>
               <p class="result-footnote" id="resultFootnote">AI-generated inspiration. Adapt it to your surroundings and stay safe.</p>
             </div>
           </div>
@@ -200,6 +201,43 @@
       <div><span class="stat-number">100%</span><span class="stat-label">YOUR PACE, YOUR PLACE</span></div>
     </section>
 
+    <section class="progress-section section-wrap" id="progressDashboard" aria-labelledby="progressTitle">
+      <div class="progress-heading">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR OUTDOOR JOURNEY</div>
+          <h2 id="progressTitle">Every little adventure <span class="text-gradient">counts.</span></h2>
+          <p>Your progress lives in this browser. No account, no streak pressure.</p>
+        </div>
+        <div class="progress-level">
+          <span class="progress-level-label">CURRENT LEVEL</span>
+          <strong id="progressLevel">Nature Newcomer</strong>
+        </div>
+      </div>
+      <div class="progress-stats">
+        <article class="progress-stat">
+          <span class="progress-stat-icon">✦</span>
+          <strong id="progressXp">0</strong>
+          <span>XP EARNED</span>
+        </article>
+        <article class="progress-stat">
+          <span class="progress-stat-icon">🌿</span>
+          <strong id="progressCompleted">0</strong>
+          <span>QUESTS COMPLETED</span>
+        </article>
+        <article class="progress-stat">
+          <span class="progress-stat-icon">🏅</span>
+          <strong id="progressAchievements">0</strong>
+          <span>ACHIEVEMENTS</span>
+        </article>
+      </div>
+      <div class="achievement-panel">
+        <div class="achievement-heading">
+          <h3>Your little milestones</h3>
+          <span id="achievementSummary">Your first quest is waiting.</span>
+        </div>
+        <div class="achievement-list" id="progressAchievementList" aria-live="polite"></div>
+      </div>
+    </section>
     <section class="closing-cta section-wrap">
       <div class="cta-glow"></div>
       <div class="eyebrow"><span class="eyebrow-line"></span> YOUR OUTSIDE ERA STARTS NOW</div>
@@ -246,3 +284,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+

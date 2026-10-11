@@ -75,6 +75,139 @@ function updateSavedCount() {
   if (count) count.textContent = String(safeParseSaved().length);
 }
 
+const progressStorageKey = "wildquest-progress";
+const questXP = 25;
+
+const achievementMilestones = [
+  { count: 1, title: "First Footsteps", description: "Complete your first nature quest.", icon: "🌱" },
+  { count: 5, title: "Curious Explorer", description: "Complete 5 nature quests.", icon: "🧭" },
+  { count: 10, title: "Nature Noticer", description: "Complete 10 nature quests.", icon: "🍃" },
+  { count: 25, title: "WildQuest Champion", description: "Complete 25 nature quests.", icon: "🏆" }
+];
+
+function readProgress() {
+  try {
+    const value = JSON.parse(localStorage.getItem(progressStorageKey) || "{}");
+    const completed = Array.isArray(value.completed) ? value.completed : [];
+    return {
+      completed: completed.filter(item =>
+        item &&
+        typeof item.key === "string" &&
+        typeof item.title === "string"
+      )
+    };
+  } catch (_) {
+    return { completed: [] };
+  }
+}
+
+function getQuestKey(quest) {
+  return `${String(quest.title || "").trim().toLowerCase()}::${String(quest.description || "").trim().toLowerCase()}`;
+}
+
+function getNatureLevel(count) {
+  if (count >= 25) return "WildQuest Champion";
+  if (count >= 10) return "Nature Noticer";
+  if (count >= 5) return "Curious Explorer";
+  if (count >= 1) return "Trail Beginner";
+  return "Nature Newcomer";
+}
+
+function renderProgressDashboard() {
+  const progress = readProgress();
+  const count = progress.completed.length;
+  const xp = count * questXP;
+  const unlocked = achievementMilestones.filter(item => count >= item.count);
+
+  $("#progressXp").textContent = String(xp);
+  $("#progressCompleted").textContent = String(count);
+  $("#progressAchievements").textContent = String(unlocked.length);
+  $("#progressLevel").textContent = getNatureLevel(count);
+
+  const next = achievementMilestones.find(item => count < item.count);
+  $("#achievementSummary").textContent = next
+    ? `${next.count - count} more ${next.count - count === 1 ? "quest" : "quests"} to unlock ${next.title}.`
+    : "You've reached every current milestone. Keep exploring at your own pace.";
+
+  const list = $("#progressAchievementList");
+  list.replaceChildren();
+
+  achievementMilestones.forEach(item => {
+    const isUnlocked = count >= item.count;
+    const card = document.createElement("article");
+    card.className = `achievement-card${isUnlocked ? " unlocked" : " locked"}`;
+
+    const icon = document.createElement("span");
+    icon.className = "achievement-icon";
+    icon.textContent = isUnlocked ? item.icon : "🔒";
+    icon.setAttribute("aria-hidden", "true");
+
+    const copy = document.createElement("div");
+    copy.className = "achievement-copy";
+
+    const title = document.createElement("strong");
+    title.textContent = item.title;
+
+    const description = document.createElement("p");
+    description.textContent = item.description;
+
+    const status = document.createElement("span");
+    status.className = "achievement-status";
+    status.textContent = isUnlocked ? "UNLOCKED" : `${item.count} QUESTS`;
+
+    copy.append(title, description, status);
+    card.append(icon, copy);
+    list.append(card);
+  });
+}
+
+function completeCurrentQuest() {
+  if (!state.quest || !state.questStarted) {
+    showToast("Start your quest first, then come back when you've finished.");
+    return;
+  }
+
+  const progress = readProgress();
+  const key = getQuestKey(state.quest);
+
+  if (progress.completed.some(item => item.key === key)) {
+    state.questStarted = false;
+    $("#completeQuestButton").disabled = true;
+    showToast("You've already earned XP for this quest. Try a new adventure!");
+    return;
+  }
+
+  progress.completed.unshift({
+    key,
+    title: state.quest.title,
+    completedAt: new Date().toISOString()
+  });
+
+  try {
+    localStorage.setItem(progressStorageKey, JSON.stringify(progress));
+  } catch (_) {
+    showToast("Browser storage is unavailable. Your progress couldn't be saved.");
+    return;
+  }
+
+  const oldCount = progress.completed.length - 1;
+  const newCount = progress.completed.length;
+  const newlyUnlocked = achievementMilestones.filter(item =>
+    oldCount < item.count && newCount >= item.count
+  );
+
+  state.questStarted = false;
+  $("#completeQuestButton").disabled = true;
+  $("#completeQuestButton").textContent = "Quest completed ✓";
+  $("#questStatus").textContent = "You did it! Thanks for spending a little time with nature.";
+
+  renderProgressDashboard();
+  showToast(
+    newlyUnlocked.length
+      ? `Quest complete! +${questXP} XP · Achievement unlocked: ${newlyUnlocked[0].title}!`
+      : `Quest complete! You earned ${questXP} XP. Lovely work.`
+  );
+}
 function renderQuest(quest, source = "local") {
   state.quest = {
     kicker: String(quest.kicker || moodLabels[state.mood] || "YOUR NEXT QUEST").slice(0, 80),
@@ -307,9 +440,15 @@ $("#startQuestButton").addEventListener("click", () => {
 function closeModal() { modal.hidden = true; document.body.style.overflow = ""; }
 $("#closeModal").addEventListener("click", closeModal);
 $("#finishPrepButton").addEventListener("click", () => {
+  state.questStarted = true;
+  $("#completeQuestButton").disabled = false;
+  $("#completeQuestButton").textContent = "Complete quest · +25 XP";
+  $("#questStatus").textContent = "Quest in progress. When you're finished, return here to celebrate.";
   closeModal();
-  showToast("Quest started. Have a lovely time outside!");
+  showToast("Quest started. Come back when you've finished to earn XP.");
 });
+
+$("#completeQuestButton").addEventListener("click", completeCurrentQuest);
 modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape") { closeModal(); closeSavedModal(); } });
 
@@ -377,3 +516,4 @@ window.setInterval(checkOllama, 30000);
     });
   }
 })();
+
