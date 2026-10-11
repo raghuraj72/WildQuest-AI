@@ -216,6 +216,10 @@ function renderQuest(quest, source = "local") {
     steps: (Array.isArray(quest.steps) ? quest.steps : []).filter(step => typeof step === "string").slice(0, 3).map(step => step.slice(0, 220))
   };
   state.saved = false;
+  // Every newly rendered quest must start in the not-yet-started state.
+  state.questStarted = false;
+  $("#completeQuestButton").disabled = true;
+  $("#completeQuestButton").textContent = "Complete quest · +25 XP";
   $("#resultKicker").textContent = state.quest.kicker;
   $("#resultTitle").textContent = state.quest.title;
   $("#resultDescription").textContent = state.quest.description;
@@ -477,6 +481,7 @@ $("#menuButton").addEventListener("click", () => $(".nav-links").classList.toggl
 $$(".nav-links a").forEach(link => link.addEventListener("click", () => $(".nav-links").classList.remove("open")));
 
 updateSavedCount();
+renderProgressDashboard();
 renderQuest(questLibrary.calm[0], "local");
 checkOllama();
 window.setInterval(checkOllama, 30000);
