@@ -963,3 +963,84 @@ h1, h2, h3 { text-wrap: balance; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Moving nature-glow border: subtle light travels around the edge of content cards. */
+@keyframes wildquest-border-glow {
+  from { --wildquest-glow-angle: 0deg; }
+  to   { --wildquest-glow-angle: 360deg; }
+}
+@property --wildquest-glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+:where(
+  .glass-card,
+  .glass-panel,
+  .quest-form,
+  .result-card,
+  .achievement-panel,
+  .progress-stat,
+  .photo-card,
+  .modal-card,
+  .manifesto-section,
+  .closing-cta,
+  .art-card
+) {
+  position: relative;
+  isolation: isolate;
+}
+:where(
+  .glass-card,
+  .glass-panel,
+  .quest-form,
+  .result-card,
+  .achievement-panel,
+  .progress-stat,
+  .photo-card,
+  .modal-card,
+  .manifesto-section,
+  .closing-cta,
+  .art-card
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--wildquest-glow-angle, 0deg),
+    transparent 0deg,
+    transparent 235deg,
+    rgba(174, 239, 126, .08) 258deg,
+    rgba(194, 255, 157, .92) 278deg,
+    rgba(116, 220, 147, .42) 294deg,
+    transparent 320deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .78;
+  animation: wildquest-border-glow 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(
+    .glass-card,
+    .glass-panel,
+    .quest-form,
+    .result-card,
+    .achievement-panel,
+    .progress-stat,
+    .photo-card,
+    .modal-card,
+    .manifesto-section,
+    .closing-cta,
+    .art-card
+  )::after {
+    animation: none;
+    background: linear-gradient(135deg, rgba(194,255,157,.42), transparent 45%, rgba(116,220,147,.18));
+  }
+}
