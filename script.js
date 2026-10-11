@@ -522,3 +522,262 @@ window.setInterval(checkOllama, 30000);
   }
 })();
 
+
+
+/* Weather FX + Moss, the local-first AI nature buddy. These additions are isolated from quest/progress logic. */
+(() => {
+  const weatherButton = document.querySelector("#weatherButton");
+  const stormLayer = document.querySelector("#stormLayer");
+  const rainCanvas = document.querySelector("#rainCanvas");
+  const windCanvas = document.querySelector("#windCanvas");
+  const lightningSvg = document.querySelector("#lightningSvg");
+  const lightningBolt = document.querySelector("#lightningBolt");
+  const stormFlash = document.querySelector(".storm-flash");
+  if (weatherButton && stormLayer && rainCanvas && windCanvas && lightningSvg && lightningBolt && stormFlash) {
+    const modes = [
+      { key: "sunny", label: "Sunny + Breeze", icon: "☀" },
+      { key: "cloudy", label: "Cloudy", icon: "☁" },
+      { key: "rainy", label: "Rainy + Lightning", icon: "🌧⚡" }
+    ];
+    let modeIndex = 0;
+    let drops = [];
+    let windStreaks = [];
+    let rainRaf = 0;
+    let windRaf = 0;
+    let strikeTimer = 0;
+    const ctx = rainCanvas.getContext("2d");
+    const windCtx = windCanvas.getContext("2d");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function sizeCanvases() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      [rainCanvas, windCanvas].forEach(canvas => {
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        const context = canvas === rainCanvas ? ctx : windCtx;
+        if (context) context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      });
+      drops = Array.from({ length: Math.min(210, Math.floor(window.innerWidth / 5)) }, () => ({
+        x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+        length: 8 + Math.random() * 17, speed: 7 + Math.random() * 10, drift: 1.5 + Math.random() * 3
+      }));
+      windStreaks = Array.from({ length: Math.min(28, Math.floor(window.innerWidth / 45)) }, () => ({
+        x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+        length: 18 + Math.random() * 65, speed: 1.2 + Math.random() * 2.7,
+        curve: (Math.random() - .5) * 14, alpha: .08 + Math.random() * .2
+      }));
+    }
+    function drawRain() {
+      if (!ctx || !document.body.classList.contains("weather-rainy")) { rainRaf = 0; return; }
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      ctx.strokeStyle = "rgba(190,220,255,.48)"; ctx.lineWidth = 1.1; ctx.beginPath();
+      for (const d of drops) {
+        ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.drift, d.y + d.length);
+        d.y += reducedMotion ? 0 : d.speed; d.x -= reducedMotion ? 0 : d.drift;
+        if (d.y > window.innerHeight + d.length) { d.y = -d.length; d.x = Math.random() * window.innerWidth; }
+        if (d.x < -10) d.x = window.innerWidth + 10;
+      }
+      ctx.stroke(); rainRaf = window.requestAnimationFrame(drawRain);
+    }
+    function drawWind() {
+      if (!windCtx || !document.body.classList.contains("weather-sunny")) { windRaf = 0; return; }
+      windCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (const w of windStreaks) {
+        windCtx.beginPath(); windCtx.moveTo(w.x, w.y);
+        windCtx.quadraticCurveTo(w.x + w.length * .45, w.y + w.curve, w.x + w.length, w.y - w.curve * .3);
+        windCtx.strokeStyle = `rgba(207,255,221,${w.alpha})`; windCtx.lineWidth = 1.2; windCtx.stroke();
+        if (!reducedMotion) w.x += w.speed;
+        if (w.x > window.innerWidth + w.length) { w.x = -w.length; w.y = Math.random() * window.innerHeight; }
+      }
+      windRaf = window.requestAnimationFrame(drawWind);
+    }
+    function makeLightning() {
+      const startX = 120 + Math.random() * 760;
+      let x = startX, y = 0;
+      const points = [[x, y]];
+      const segments = 7 + Math.floor(Math.random() * 5);
+      for (let i = 1; i <= segments; i++) {
+        y = i * (520 / segments); x += (Math.random() - .5) * 95;
+        points.push([Math.max(20, Math.min(980, x)), y]);
+      }
+      let path = `M ${points[0][0]} ${points[0][1]}`;
+      for (const pt of points.slice(1)) path += ` L ${pt[0]} ${pt[1]}`;
+      const forkAt = points[Math.max(2, Math.floor(points.length * .55))];
+      path += ` M ${forkAt[0]} ${forkAt[1]} l ${Math.random() > .5 ? 38 : -38} 38 l ${Math.random() > .5 ? 12 : -12} 42`;
+      lightningBolt.setAttribute("d", path); lightningSvg.classList.add("lightning-active");
+      stormFlash.classList.remove("flash-active"); void stormFlash.offsetWidth; stormFlash.classList.add("flash-active");
+      window.setTimeout(() => lightningSvg.classList.remove("lightning-active"), 180 + Math.random() * 170);
+    }
+    function planStrike() {
+      window.clearTimeout(strikeTimer);
+      if (document.body.classList.contains("weather-rainy") && !reducedMotion) {
+        strikeTimer = window.setTimeout(() => {
+          if (document.body.classList.contains("weather-rainy")) makeLightning();
+          if (Math.random() > .55) window.setTimeout(() => {
+            if (document.body.classList.contains("weather-rainy")) makeLightning();
+          }, 180 + Math.random() * 350);
+          planStrike();
+        }, 1800 + Math.random() * 4700);
+      }
+    }
+    function setWeather(index, notify = true) {
+      modeIndex = index;
+      const mode = modes[modeIndex];
+      document.body.classList.remove("weather-sunny", "weather-cloudy", "weather-rainy", "weather-storm");
+      document.body.classList.add(`weather-${mode.key}`);
+      weatherButton.dataset.weather = mode.key;
+      weatherButton.innerHTML = `${mode.icon} <span>${mode.label}</span>`;
+      weatherButton.setAttribute("aria-label", `Weather effects: ${mode.label}. Click to change.`);
+      weatherButton.title = `Current visual weather: ${mode.label}. Click to change weather`;
+      if (mode.key === "rainy") {
+        sizeCanvases(); if (!rainRaf) rainRaf = window.requestAnimationFrame(drawRain);
+      } else {
+        if (ctx) ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        if (rainRaf) window.cancelAnimationFrame(rainRaf); rainRaf = 0;
+      }
+      if (mode.key === "sunny") {
+        sizeCanvases(); if (!windRaf) windRaf = window.requestAnimationFrame(drawWind);
+      } else {
+        if (windCtx) windCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        if (windRaf) window.cancelAnimationFrame(windRaf); windRaf = 0;
+      }
+      if (mode.key === "rainy") planStrike();
+      else {
+        window.clearTimeout(strikeTimer); lightningSvg.classList.remove("lightning-active");
+        stormFlash.classList.remove("flash-active");
+      }
+      try { localStorage.setItem("wildquest-weather-mode", mode.key); } catch (_) {}
+      if (notify && typeof showToast === "function") showToast(`${mode.label} weather effects enabled.`);
+    }
+    weatherButton.addEventListener("click", () => setWeather((modeIndex + 1) % modes.length));
+    window.addEventListener("resize", sizeCanvases, { passive: true });
+    sizeCanvases();
+    try {
+      const savedMode = localStorage.getItem("wildquest-weather-mode");
+      const savedIndex = modes.findIndex(mode => mode.key === savedMode);
+      setWeather(savedIndex >= 0 ? savedIndex : 0, false);
+    } catch (_) { setWeather(0, false); }
+  }
+
+  const launcher = document.querySelector("#wildbotLauncher");
+  const panel = document.querySelector("#wildbotPanel");
+  const close = document.querySelector("#wildbotClose");
+  const form = document.querySelector("#wildbotForm");
+  const input = document.querySelector("#wildbotInput");
+  const messages = document.querySelector("#wildbotMessages");
+  if (!launcher || !panel || !close || !form || !input || !messages) return;
+
+  let busy = false;
+  const addMessage = (text, role) => {
+    const bubble = document.createElement("article");
+    bubble.className = `wildbot-message ${role === "user" ? "user-message" : "bot-message"}`;
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    return bubble;
+  };
+  function setPanel(open) {
+    panel.hidden = !open;
+    launcher.setAttribute("aria-expanded", String(open));
+    if (open) input.focus();
+    else launcher.focus();
+  }
+  launcher.addEventListener("click", () => setPanel(panel.hidden));
+  close.addEventListener("click", () => setPanel(false));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !panel.hidden) setPanel(false);
+  });
+  document.querySelectorAll("[data-prompt]").forEach(button => button.addEventListener("click", () => {
+    input.value = button.getAttribute("data-prompt") || "";
+    form.requestSubmit();
+  }));
+
+  function fallbackAnswer(question) {
+    const q = question.toLowerCase();
+    if (/storm|thunder|lightning|rain|weather/.test(q)) {
+      return "Storm safety first: if you hear thunder or see lightning, head indoors or into a fully enclosed hard-topped vehicle. Avoid open fields, hilltops, isolated trees, water, and metal fences. Do not wait under a tree. If you cannot reach shelter, move away from tall isolated objects and crouch low as a last resort. The weather effect in this app is only a visual simulation, not a forecast.";
+    }
+    if (/quest|5.minute|five.minute|outside|bored/.test(q)) {
+      return "Try a tiny 5-minute quest 🌿: (1) Choose a safe spot close to home. (2) Notice three different shades of green or three natural sounds. (3) Pick one detail you normally overlook. Leave plants and wildlife undisturbed, and stay aware of traffic and your surroundings.";
+    }
+    if (/wildquest|how.*work|ollama|model|ai/.test(q)) {
+      return "WildQuest helps you turn a short break into a real-world nature quest. Choose your time, mood, and environment in the quest builder. If Ollama is running locally with a text-generating model, Moss can use it to answer questions; otherwise I use a small built-in help guide. Your quest progress is stored in this browser.";
+    }
+    if (/anxious|stress|overwhelm|tired/.test(q)) {
+      return "Let's keep it gentle. If it feels safe, pause where you are, relax your shoulders, and take three comfortable slow breaths. You could try a two-minute listening break or simply rest indoors. You don't have to push yourself or go outside if conditions aren't right.";
+    }
+    return "I can help with nature quest ideas, outdoor safety, weather precautions, and how to use WildQuest AI. For a more specific answer, tell me a little more about the situation. If Ollama is running locally, I'll try asking your local model too.";
+  }
+
+  async function askLocalModel(question) {
+    const response = await fetch("http://localhost:11434/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "qwen3:4b",
+        stream: false,
+        messages: [
+          { role: "system", content: "You are Moss, the friendly and practical nature companion inside WildQuest AI. Answer clearly and concisely. Help with app use, nature observations, gentle outdoor activities, and general questions. Prioritize safety. During lightning or thunder, advise moving into a substantial enclosed building or hard-topped vehicle; never recommend sheltering under an isolated tree. Do not claim to know live weather, local conditions, or current facts unless the user supplies them. Do not claim to perform actions you cannot perform. Keep most answers under 140 words." },
+          { role: "user", content: question }
+        ],
+        options: { temperature: 0.65 }
+      })
+    });
+    if (!response.ok) throw new Error(`Local model returned ${response.status}`);
+    const data = await response.json();
+    const answer = data?.message?.content?.trim();
+    if (!answer) throw new Error("Local model returned an empty answer");
+    return answer.replace(/<think>[\s\S]*?<\/think>/gi, "").trim() || fallbackAnswer(question);
+  }
+
+  async function submitQuestion(question) {
+    if (!question || busy) return;
+    addMessage(question, "user");
+    input.value = "";
+    busy = true;
+    const typing = document.createElement("article");
+    typing.className = "wildbot-message bot-message wildbot-typing";
+    typing.setAttribute("aria-label", "Moss is thinking");
+    typing.innerHTML = "<span></span><span></span><span></span>";
+    messages.appendChild(typing);
+    messages.scrollTop = messages.scrollHeight;
+    let answer;
+    try {
+      answer = await askLocalModel(question);
+    } catch (_) {
+      answer = fallbackAnswer(question);
+    } finally {
+      typing.remove();
+      busy = false;
+    }
+    addMessage(answer, "bot");
+  }
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    submitQuestion(input.value.trim());
+  });
+})();
+
+
+// Lightweight reading progress indicator; does not touch quest state.
+(() => {
+  const bar = document.querySelector("#scrollProgressBar");
+  if (!bar) return;
+  let ticking = false;
+  const update = () => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? Math.min(100, Math.max(0, (window.scrollY / maxScroll) * 100)) : 0;
+    bar.style.width = `${progress}%`;
+    ticking = false;
+  };
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      window.requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+  window.addEventListener("resize", update, { passive: true });
+  update();
+})();

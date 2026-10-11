@@ -20,6 +20,8 @@ This edition adds an actual real-time **Three.js/WebGL 3D forest** with low-poly
 - **Saved quests:** Save up to 20 quests, view them from the heart icon, remove individual quests, or clear the list.
 - **Works without AI:** A built-in quest library is available if Ollama is not installed or running.
 - **Responsive design:** Desktop and mobile layouts, keyboard-accessible controls, reduced-motion support.
+- **Weather effects:** Switch between sunny, cloudy, rainy, and cinematic thunderstorm visuals with animated rain, branching lightning, storm flashes, and mist. These are visual effects, not a live forecast.
+- **Moss AI nature buddy:** A small robot-style chat companion with suggested prompts and a helpful fallback. When opened from a local development server and Ollama is reachable at `http://localhost:11434`, it tries `qwen3:4b` for answers; otherwise it provides built-in guidance. A browser-hosted GitHub Pages site cannot reach a visitor's localhost Ollama service.
 
 ## Project structure
 
@@ -127,3 +129,9 @@ Treat AI suggestions as inspiration, not expert outdoor guidance. Stay in public
 ## License
 
 This project can be distributed under the MIT License. Add a `LICENSE` file containing the standard MIT text before publishing if you want to formally include the license. Check the selected AI model's own license separately.
+
+## Nature Adventure UI refresh
+
+The refreshed interface uses a forest-inspired palette, softer glass panels, rounded nature cards, clearer spacing and responsive navigation. A lightweight reading-progress line follows page scroll. Existing quest generation, saved quests, XP and achievement progress, 3D forest, bird animation, visual weather effects, and Moss assistant remain in place. Animations respect the operating system's reduced-motion preference.
+
+Weather is a visual ambience control, not a live forecast. Moss can use a local Ollama model when available and otherwise uses built-in fallback guidance.

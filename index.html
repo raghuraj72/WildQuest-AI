@@ -12,11 +12,14 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="scroll-progress" aria-hidden="true"><span id="scrollProgressBar"></span></div>
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <div class="grain"></div>
   <canvas id="birdFlightCanvas" class="bird-flight-canvas" aria-hidden="true"></canvas>
-  <button id="weatherButton" class="weather-toggle" type="button" aria-label="Change weather effects" title="Change weather: sunny, cloudy, rainy">☀ <span>Sunny</span></button>
+  <canvas id="windCanvas" class="wind-canvas" aria-hidden="true"></canvas>
+  <div id="stormLayer" class="storm-layer" aria-hidden="true"><div class="storm-clouds"></div><canvas id="rainCanvas"></canvas><svg id="lightningSvg" class="lightning-svg" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true"><path id="lightningBolt" d="" /></svg><div class="storm-flash"></div><div class="storm-mist"></div></div>
+  <button id="weatherButton" class="weather-toggle" type="button" aria-label="Change weather effects" title="Cycle visual weather: sunny, cloudy, rainy with lightning">☀ <span>Sunny</span></button>
 
   <header class="topbar">
     <a class="brand" href="#" aria-label="WildQuest AI home">
@@ -248,7 +251,7 @@
     </section>
   </main>
 
-  <footer class="footer">
+  <footer class="footer" aria-label="WildQuest AI footer">
     <a class="brand footer-brand" href="#"><span class="brand-mark"><svg viewBox="0 0 40 40"><path d="M20 34V18M20 24C8 24 6 14 7 7c9 0 16 4 16 13M20 20C20 10 27 5 34 5c1 10-3 17-14 19" /></svg></span><span>WildQuest<span class="brand-ai">.ai</span></span></a>
     <p>Made for the curious. Built to get you out there.</p>
     <div class="footer-right"><span>AN OPEN-SOURCE AI EXPERIMENT</span><a href="#discover">BACK TO TOP ↑</a></div>
@@ -278,6 +281,30 @@
       <button class="primary-button" id="finishPrepButton">Let's go <span>↗</span></button>
     </div>
   </div>
+  <section id="wildbotPanel" class="wildbot-panel" role="dialog" aria-modal="false" aria-labelledby="wildbotTitle" hidden>
+    <header class="wildbot-header">
+      <div class="wildbot-avatar" aria-hidden="true"><span class="bot-antenna"></span><span class="bot-face"><i></i><i></i><b></b></span></div>
+      <div class="wildbot-heading"><h2 id="wildbotTitle">Moss · Nature Buddy</h2><p><span class="wildbot-online-dot"></span> Your little outdoor guide</p></div>
+      <button id="wildbotClose" class="wildbot-close" type="button" aria-label="Close assistant">×</button>
+    </header>
+    <div id="wildbotMessages" class="wildbot-messages" aria-live="polite">
+      <article class="wildbot-message bot-message">Hey explorer! 🌱 I'm Moss. Ask me for a nature quest, outdoor safety tips, or help using WildQuest.</article>
+    </div>
+    <div class="wildbot-suggestions" id="wildbotSuggestions">
+      <button type="button" data-prompt="Suggest a 5-minute nature quest">5-minute quest</button>
+      <button type="button" data-prompt="How can I stay safe outdoors during a storm?">Storm safety</button>
+      <button type="button" data-prompt="How does WildQuest AI work?">How it works</button>
+    </div>
+    <form id="wildbotForm" class="wildbot-form">
+      <label class="sr-only" for="wildbotInput">Ask Moss a question</label>
+      <input id="wildbotInput" name="question" type="text" maxlength="700" placeholder="Ask Moss anything…" autocomplete="off" required />
+      <button type="submit" aria-label="Send message">➤</button>
+    </form>
+    <p class="wildbot-note">Local AI when Ollama is running · Helpful fallback otherwise</p>
+  </section>
+  <button id="wildbotLauncher" class="wildbot-launcher" type="button" aria-label="Chat with Moss, your AI nature buddy" aria-controls="wildbotPanel" aria-expanded="false">
+    <span class="wildbot-launcher-bot" aria-hidden="true"><span class="bot-antenna"></span><span class="bot-face"><i></i><i></i><b></b></span></span><span class="wildbot-launcher-label">Ask Moss</span><span class="wildbot-launcher-spark">✦</span>
+  </button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="scene3d.js"></script>
   <script src="bird-flight.js"></script>
